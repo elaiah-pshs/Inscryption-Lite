@@ -1,15 +1,16 @@
 import java.util.Stack;
-import java.util.ArrayList;
 
 public class Session {
     private boolean is_active = false;
     private Phases phase = Phases.P1;
     private boolean turn_confirmed = false;
 
-    private static Avatar[] avatars = {new Avatar(), new Avatar()};
+    private static Avatar[] avatars = {
+        new Avatar("path_1"),
+        new Avatar("path_2"),
+    };
 
-    private Stack<Event> event_history = new Stack<Event>();
-    private ArrayList<EventMaker> event_makers = new ArrayList<EventMaker>();
+    private static Stack<Event> event_history = new Stack<Event>();
 
     private boolean condition = true;
     private Avatar init;
@@ -43,20 +44,12 @@ public class Session {
         this.is_active = a;
     }
 
-    public Event getLastEvent() {
+    public static Event getLastEvent() {
         return event_history.peek();
     }
 
-    public void addevent(Event e) {
+    public static void addEvent(Event e) {
         event_history.push(e);
-    }
-
-    public ArrayList<EventMaker> getEventMakers() {
-        return this.event_makers;
-    }
-
-    public void addEventMaker(EventMaker e) {
-        this.event_makers.add(e);
     }
 
     public void render() {
@@ -68,6 +61,11 @@ public class Session {
             for (int j = 0; j < 5; i++) {
                 init.draw();
             }
+        }
+
+        // Game loop
+        while (is_active){
+            ;
         }
     }
 
@@ -88,11 +86,12 @@ public class Session {
             this.phase.getObservingAvatar().faceDown();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            ;   // Will trigger in the attack (A) phase
         }
 
+        // Waits for the player to press the play button
         while (!turn_confirmed) {
-            if (condition) {    // if the play button was pressed
+            if (condition) {
                 turn_confirmed = true;
                 App.renderView(Views.GAME);
             }
@@ -102,8 +101,8 @@ public class Session {
     public void close() {
         this.is_active = false;
         this.phase = Phases.P1;
-        this.phase.getPlayingAvatar().reset();
-        this.phase.getObservingAvatar().reset();
+        avatars[0].reset();
+        avatars[1].reset();
         App.renderView(Views.START);
     }
 }
